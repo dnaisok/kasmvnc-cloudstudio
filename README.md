@@ -202,7 +202,7 @@ nano ~/.vnc/xstartup
 
 ## Tech Stack
 
-- **KasmVNC** v1.3.2 — Web-native remote desktop streaming
+- **KasmVNC** v1.3.4 — Web-native remote desktop streaming
 - **XFCE** — Lightweight desktop environment
 - **Ubuntu** — Cloud Studio base environment
 - **Cloud Studio Port Forwarding** — HTTPS access via `*.cloudstudio.work`

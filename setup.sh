@@ -9,7 +9,7 @@ set -euo pipefail
 # Studio's port forwarding and ephemeral workspace model.
 # ==============================================================
 
-KASMVNC_VERSION="${KASMVNC_VERSION:-1.3.2}"
+KASMVNC_VERSION="${KASMVNC_VERSION:-1.3.4}"
 KASMVNC_PORT="${KASMVNC_PORT:-8443}"
 DESKTOP="${DESKTOP:-xfce4}"
 
@@ -66,18 +66,20 @@ log "Dependencies installed successfully"
 # --------------------------------------------------------------
 # Step 3: Download and install KasmVNC
 # --------------------------------------------------------------
-KASMVNC_DEB="kasmvncserver_ubuntu_${UBUNTU_VERSION}_${KASMVNC_VERSION}_amd64.deb"
+# KasmVNC deb naming: kasmvncserver_{codename}_{version}_{arch}.deb
+# e.g. kasmvncserver_noble_1.3.4_amd64.deb, kasmvncserver_jammy_1.3.4_amd64.deb
+KASMVNC_DEB="kasmvncserver_${UBUNTU_VERSION}_${KASMVNC_VERSION}_amd64.deb"
 KASMVNC_URL="https://github.com/kasmtech/KasmVNC/releases/download/v${KASMVNC_VERSION}/${KASMVNC_DEB}"
 
 if [ ! -f "/tmp/${KASMVNC_DEB}" ]; then
-    log "Downloading KasmVNC v${KASMVNC_VERSION}..."
-    wget -q --show-progress "${KASMVNC_URL}" -O "/tmp/${KASMVNC_DEB}" || {
-        # Fallback: try jammy if version-specific fails
-        warn "Exact version not found, trying jammy package..."
-        KASMVNC_DEB="kasmvncserver_ubuntu_jammy_${KASMVNC_VERSION}_amd64.deb"
+    log "Downloading KasmVNC v${KASMVNC_VERSION} for ${UBUNTU_VERSION}..."
+    if ! wget -q --show-progress "${KASMVNC_URL}" -O "/tmp/${KASMVNC_DEB}"; then
+        # Fallback: try jammy package (compatible with noble in most cases)
+        warn "${UBUNTU_VERSION} package not found, trying jammy fallback..."
+        KASMVNC_DEB="kasmvncserver_jammy_${KASMVNC_VERSION}_amd64.deb"
         KASMVNC_URL="https://github.com/kasmtech/KasmVNC/releases/download/v${KASMVNC_VERSION}/${KASMVNC_DEB}"
-        wget -q --show-progress "${KASMVNC_URL}" -O "/tmp/${KASMVNC_DEB}"
-    }
+        wget -q --show-progress "${KASMVNC_URL}" -O "/tmp/${KASMVNC_DEB}" || fail "Download failed. Check version at: https://github.com/kasmtech/KasmVNC/releases"
+    fi
 fi
 
 log "Installing KasmVNC package..."
