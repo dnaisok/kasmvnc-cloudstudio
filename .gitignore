@@ -1,0 +1,13 @@
+# KasmVNC downloads
+*.deb
+
+# VNC session data
+.vnc/
+.kasmpasswd
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
